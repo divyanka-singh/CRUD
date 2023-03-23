@@ -1,0 +1,19 @@
+{% extends 'index' %}
+{% load static %}
+
+<body>
+    <div class="container">
+    <div class="card">
+        <div class="cardbody">
+            <form action="/login" method="POST">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="example@gamil.com"
+                    required>
+                <label for="Password" class="form-label">Password:</label>
+                <input type="Password" class="form-control" name="password" id="password" required>
+                <button class="btn btn-primary" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>

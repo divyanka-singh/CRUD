@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finance Management</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/myscript.js' %}"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
+    <div class="container">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2><b>MY EXPENSE MANAGER</b></h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i
+                                class="material-icons">&#xE147;</i> <span>New Expense</span></a>
+                        <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i
+                                class="material-icons">&#xE15C;</i> <span>Delete</span></a>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="custom-checkbox">
+                                <input type="checkbox" id="selectAll">
+                                <label for="selectAll"></label>
+                            </span>
+                        </th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Date of Expense</th>
+                        <th>Amount</th>
+                        <th>Updated At</th>
+                        <th>Created By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in users %}
+                    <tr>
+                        <td>
+                            <span class="custom-checkbox">
+                                <input type="checkbox" id="checkbox1" name="options[]" value="1">
+                                <label for="checkbox1"></label>
+                            </span>
+                        </td>
+                        <td>{{i.name}}</td>
+                        <td>{{i.category}}</td>
+                        <td>{{i.date}}</td>
+                        <td>INR {{i.amount}}</td>
+                        <td>{{i.updated_at}}</td>
+                        <td>{{i.created_by}}</td>
+                        <td>
+                            <a href="#editEmployeeModal-{{forloop.counter}}" class="edit" data-toggle="modal"><i class="material-icons"
+                                    data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                            <a href="#deleteEmployeeModal-{{forloop.counter}}" class="delete" data-toggle="modal"><i class="material-icons"
+                                    data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            <div class="clearfix">
+                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                <ul class="pagination">
+                    <li class="page-item disabled"><a href="#">Previous</a></li>
+                    <li class="page-item"><a href="#" class="page-link">1</a></li>
+                    <li class="page-item"><a href="#" class="page-link">2</a></li>
+                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
+                    <li class="page-item"><a href="#" class="page-link">4</a></li>
+                    <li class="page-item"><a href="#" class="page-link">5</a></li>
+                    <li class="page-item"><a href="#" class="page-link">Next</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Add Modal HTML -->
+    <div id="addEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'add' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add New Expense</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Expense Name -->
+                        <div class="form-group">
+                            <label for="name">Expense Name:</label>
+                            <input type="text" class="form-control" name="name" id="name" maxlength="140" required>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="form-group">
+                            <label for="date">Date:</label>
+                            <input type="date" class="form-control" name="date" id="date" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label for="category">Category:</label>
+                           <label for="category">Category:</label>
+                            <select name="category" class="form-control" id="category" required>
+                                 <option value=""selected>--Select Category--</option>
+                              <option value="Health">Health</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Education">Education</option>
+                                <option value="Books">Books</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea name="description" class="form-control" id="description" required></textarea>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="form-group">
+                            <label for="amount">Amount:</label>
+                            <input type="number" class="form-control" name="amount" id="amount" min="0" required>
+                        </div>
+
+                        <!-- Created By -->
+                        <div class="form-group">
+                            <label for="created_by">Created By:</label>
+                            <input type="text" class="form-control" name="created_by" id="created_by" value="{{ request.user.username }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-success" value="Add">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Modal HTML -->
+    {% for i in users %}
+    <div id="editEmployeeModal-{{forloop.counter}}" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/update/{{i.id}}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Expense</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                   <div class="modal-body">
+                        <!-- Expense Name -->
+                        <div class="form-group">
+                            <label for="name">Expense Name:</label>
+                            <input type="text" value="{{i.name}}" class="form-control" name="name" id="name" maxlength="140" required>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="form-group">
+                            <label for="date">Date:</label>
+                            <input type="date" value="{{i.date}}" class="form-control" name="date" id="date" required>
+                        </div>
+
+                        <!-- Category -->
+                       <div class="form-group">
+                            <label for="category">Category:</label>
+                            <select name="category" class="form-control" id="category" >
+                              {% if i.category=="health" %}
+                                <option value="health" selected>Health</option>
+                                {% else %}
+                                <option value="health">Health</option>
+                                {% endif %}
+                                {% if i.category=="electronics" %}
+                                <option value="electronics" selected>Electronics</option>
+                                {% else %}
+                                <option value="electronics">Electronics</option>
+                                {% endif %}
+                                {% if i.category=="travel" %}
+                                <option value="travel" selected>Travel</option>
+                                {% else %}
+                                <option value="travel">Travel</option>
+                                {% endif %}
+                                {% if i.category=="education" %}
+                                <option value="education" selected>Education</option>
+                                {% else %}
+                                <option value="education">Education</option>
+                                {% endif %}
+                                {% if i.category=="books" %}
+                                <option value="books" selected>Books</option>
+                                {% else %}
+                                <option value="books">Books</option>
+                                {% endif %}
+                                {% if i.category=="others" %}
+                                <option value="others" selected>Others</option>
+                                {% else %}
+                                <option value="others">Others</option>
+                                {% endif %}
+                            </select> 
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                           <input type="textarea" name="description" value="{{i.description}}" class="form-control" id="description" required>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="form-group">
+                            <label for="amount">Amount:</label>
+                            <input type="number" value="{{i.amount}}" class="form-control" value="i.amount" name="amount" id="amount" min="0" required>
+                        </div>
+
+                        <!-- Created By -->
+                        <div class="form-group">
+                            <label for="created_by">Created By:</label>
+                            <input type="text" value="{{i.created_by}}" class="form-control" value="i.created_by" name="created_by" id="created_by" value="{{ request.user.username }}" readonly>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-info" value="Update">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- Delete Modal HTML -->
+    {% for i in users %}
+    <div id="deleteEmployeeModal-{{forloop.counter}}" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Employee</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete these Records?</p>
+                        <p class="text-warning"><small>Are you sure want to delete {{i.name}}</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+
+</html>
